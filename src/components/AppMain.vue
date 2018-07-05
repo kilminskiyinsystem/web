@@ -1,4 +1,4 @@
-<template>
+<template xmlns:>
   <v-app>
     <div v-show="show">
       <v-content>
@@ -13,18 +13,18 @@
                 <v-card-text>
                   <v-form>
                     <v-text-field
-                      v-model="login"
+                      v-model="loginForm"
                       prepend-icon="person"
-                      name="login"
+                      name="loginForm"
                       label="Логин"
                       type="text"
                       required
                     ></v-text-field>
                     <v-text-field
-                      v-model="password"
+                      v-model="passwordForm"
                       id="password"
                       prepend-icon="lock"
-                      name="password"
+                      name="passwordForm"
                       label="Пароль"
                       type="password"
                       required
@@ -51,8 +51,8 @@
         <v-toolbar-title>Приложение учета пользователей</v-toolbar-title>
         <v-spacer></v-spacer>
         <div class="hidden-sm-and-down">
-          <v-btn flat>{{adminLogin}}</v-btn>
-          <v-btn flat>{{adminPassword}}</v-btn>
+          <v-btn flat>{{loginForm}}</v-btn>
+          <v-btn flat>{{passwordForm}}</v-btn>
           <v-btn flat @click.native="Login()">Выход</v-btn>
         </div>
 
@@ -76,6 +76,7 @@
           </v-tab>
         </v-tabs>
       </v-toolbar>
+
       <v-content>
 
         <v-tabs-items v-model="model">
@@ -83,117 +84,184 @@
             :id="`view`"
           >
             <v-card flat>
-              <!--<v-card-text>view</v-card-text>-->
               <ul>
                 <li v-for="user in users" :key="user.login">
-                  <!--<input v-model="user.login">-->
                   {{user.login}} {{user.password}}
                 </li>
               </ul>
             </v-card>
           </v-tab-item>
+
           <v-tab-item
             :id="`admin`"
           >
             <v-card flat>
-              <v-card-text>Добавление, удаление, изменение учетных записей</v-card-text>
-              <div v-for="(user, key, index) in users" v-bind:key="index">
-                {{ key + 1}}:
-                <input v-model="user.login">
-                <input v-model="user.password">
-                <v-btn color="error" @click.native="Delete(key)">Удалить</v-btn>
-              </div>
 
-              <div>
+              <h3>Добавление учетной записи</h3>
+              <div style="max-width: 50%; margin: auto;">
+                <v-form>
+                  <v-container>
+                <v-layout column>
 
-                <v-layout column wrap>
+                  <v-card-text>
+                    <v-form>
 
-                  <!--<v-flex xs12 sm6>-->
-                    <!--<v-text-field-->
-                      <!--v-model="vSecondName"-->
-                      <!--:vrules="[rules.required, rules.counter]"-->
-                      <!--label="Фамилия"-->
-                      <!--counter-->
-                      <!--maxlength="50"-->
-                    <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                    <v-layout row>
+                      <v-text-field
+                        v-model="vLogin"
+                        prepend-icon="person"
+                        name="login"
+                        label="Логин"
+                        type="text"
+                        required
+                      ></v-text-field>
 
-                  <!--<v-flex xs12 sm6>-->
-                    <!--<v-text-field-->
-                      <!--v-model="vFirstName"-->
-                      <!--:vrules="[rules.required, rules.counter]"-->
-                      <!--label="Имя"-->
-                      <!--counter-->
-                      <!--maxlength="50"-->
-                    <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                      <v-text-field
+                        v-model="vPassword"
+                        :append-icon="show1 ? 'visibility_off' : 'visibility'"
+                        :rules="[rules.required, rules.min]"
+                        :type="show1 ? 'text' : 'password'"
+                        name="input-10-1"
+                        label="Пароль"
+                        hint="Пароль не менее 6 символов"
+                        counter
+                        @click:append="show1 = !show1"
+                      ></v-text-field>
 
-                  <!--<v-flex xs12 sm6>-->
-                    <!--<v-text-field-->
-                      <!--v-model="vPatronymic"-->
-                      <!--:vrules="[rules.required, rules.counter]"-->
-                      <!--label="Отчество"-->
-                      <!--counter-->
-                      <!--maxlength="50"-->
-                    <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                  </v-layout>
+                </v-form>
+                </v-card-text>
 
-                  <!--<v-flex xs12 sm6>-->
-                    <!--<v-text-field-->
-                      <!--v-model="vPosition"-->
-                      <!--:vrules="[rules.required, rules.counter]"-->
-                      <!--label="Должность"-->
-                      <!--counter-->
-                    <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                  <v-layout row>
+                  <v-flex xr3>
+                    <v-text-field
+                      v-model="vSecondName"
+                      :rules="[rules.required, rules.counter]"
+                      label="Фамилия"
+                      counter
+                      maxlength="50"
+                      required
+                    ></v-text-field>
+                  </v-flex>
 
-                  <!--<v-flex xs12 sm6>-->
-                    <!--<v-text-field-->
-                      <!--v-model="vSubdivision"-->
-                      <!--:vrules="[rules.required, rules.counter]"-->
-                      <!--label="Подразделение"-->
-                      <!--counter-->
-                    <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                  <v-flex>
+                    <v-text-field
+                      v-model="vFirstName"
+                      :rules="[rules.required, rules.counter]"
+                      label="Имя"
+                      counter
+                      maxlength="50"
+                      required
+                    ></v-text-field>
+                  </v-flex>
 
-                  <!--<v-card>-->
-                    <!--<v-card-text>-->
-                      <!--<v-text-field :mask="mask" v-model="value" label="Value"></v-text-field>-->
-                    <!--</v-card-text>-->
-                  <!--</v-card>-->
+                  <v-flex>
+                    <v-text-field
+                      v-model="vPatronymic"
+                      :rules="[rules.required, rules.counter]"
+                      label="Отчество"
+                      counter
+                      maxlength="50"
+                      required
+                    ></v-text-field>
+                  </v-flex>
+                  </v-layout>
 
-                  <!--<v-flex xs12 sm6>-->
-                    <!--<v-text-field-->
-                      <!--v-model="vEmail"-->
-                      <!--:erules="[rules.required, rules.email]"-->
-                      <!--label="E-mail"-->
-                    <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                  <v-layout row>
 
-                  <!--<v-flex xs12 sm6>-->
-                  <!--<v-text-field-->
-                  <!--v-model="vPassword"-->
-                  <!--:append-icon="show1 ? 'visibility_off' : 'visibility'"-->
-                  <!--:prules="[rules.required, rules.min]"-->
-                  <!--:type="show1 ? 'text' : 'password'"-->
-                  <!--name="input-10-1"-->
-                  <!--label="Normal with hint text"-->
-                  <!--hint="At least 6 characters"-->
-                  <!--counter-->
-                  <!--@click:append="show1 = !show1"-->
-                  <!--&gt;</v-text-field>-->
-                  <!--</v-flex>-->
+                    <v-flex xs12 sm6 md4>
+                      <v-menu
+                        ref="menu"
+                        :close-on-content-click="false"
+                        v-model="menu"
+                        :nudge-right="40"
+                        :return-value.sync="vDate"
+                        lazy
+                        transition="scale-transition"
+                        offset-y
+                        full-width
+                        min-width="290px"
+                      >
+                        <v-text-field
+                          slot="activator"
+                          v-model="vDate"
+                          label="Дата рождения"
+                          prepend-icon="event"
+                          readonly
+                          required
+                        ></v-text-field>
+                        <v-date-picker v-model="vDate" no-title scrollable>
+                          <v-spacer></v-spacer>
+                          <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                          <v-btn flat color="primary" @click="$refs.menu.save(vDate)">OK</v-btn>
+                        </v-date-picker>
+                      </v-menu>
+                    </v-flex>
+
+                  <v-flex>
+                    <v-text-field
+                      v-model="vPosition"
+                      label="Должность"
+                      counter
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex>
+                    <v-text-field
+                      v-model="vSubdivision"
+                      label="Подразделение"
+                      counter
+                    ></v-text-field>
+                  </v-flex>
+                  </v-layout>
+
+                  <v-layout row>
+                  <v-flex>
+                    <v-text-field
+                      :mask="mask"
+                      v-model="value"
+                      :rules="[rules.required]"
+                      label="Телефон"
+                    ></v-text-field>
+                  </v-flex>
+
+                  <v-flex>
+                    <v-text-field
+                      v-model="vEmail"
+                      :rules="[rules.required, rules.email]"
+                      label="E-mail"
+                    ></v-text-field>
+                  </v-flex>
+                  </v-layout>
 
                 </v-layout>
-                <!--+1. Фамилия * (длина 50)-->
-                <!--+2. Имя * (длина 50)-->
-                <!--+3. Отчество * (длина 50)-->
-                <!--4. Дата рождения *-->
-                <!--+5. Должность-->
-                <!--+6. Подразделение-->
-                <!--+7. Телефон * (сотовый)-->
-                <!--+8. EMail-->
-                <!--+9. Пароль (пароль не менее 6 символов) *-->
+
+                  </v-container>
+                </v-form>
+
+                <v-btn color="primary" @click.native="Add()">Добавить</v-btn>
+
+              </div>
+
+              <h3>Изменение, удаление учетных записей</h3>
+              <div v-for="(user, key, index) in users" v-bind:key="index">
+                <v-layout row style="max-width: 50%; margin: auto;">
+
+                    <v-text-field
+                      label="Логин пользователя"
+                      v-model="user.login"
+                      outline
+                    ></v-text-field>
+
+                    <v-text-field
+                      label="Пароль"
+                      v-model="user.password"
+                      outline
+                    ></v-text-field>
+
+                  <v-btn color="error" @click.native="Delete(key)">Удалить</v-btn>
+                </v-layout>
+
               </div>
 
             </v-card>
@@ -223,39 +291,53 @@ export default {
   name: 'AppMain',
   data: function () {
     return {
+      adminLogin: 'xxx',
+      adminPassword: 'xxx',
+      loginForm: null,
+      passwordForm: null,
+
+      vLogin: null,
+      vPassword: null,
       vSecondName: null,
       vFirstName: null,
       vPatronymic: null,
       vPosition: null,
       vSubdivision: null,
-      vPassword: null,
       vEmail: null,
       vDate: null,
-      password: null,
+
+      users: [
+        {login: 'admin', password: 'admin'},
+        {login: 'user', password: 'user'}
+      ],
+
+      menu: false,
       alert: false,
       show: true,
-      adminLogin: 'xxx',
-      adminPassword: 'xxx',
       model: 'admin',
-      users: [
-        {login: 'xxx', password: 'xxx'},
-        {login: 'UserLogin', password: '12345678'}
-      ],
       mask: 'phone',
-      title: 'Preliminary report',
       email: '',
-      show1: false
-
+      show1: false,
+      rules: {
+        required: value => !!value || 'Required.',
+        counter: value => value.length <= 50 || 'Max 50 characters',
+        min: v => v.length >= 6 || 'Вы ввели меньше 6 символов',
+        email: value => {
+          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          return pattern.test(value) || 'Invalid e-mail.'
+        }
+      }
     }
   },
   methods: {
     Submit () {
-      console.log(`Email is ${this.login} and Password is ${this.password}`)
-      const result = true
-      this.adminLogin = 'xxx'
-      this.adminPassword = 'xxx'
-      // this.login === this.adminLogin && this.password === this.adminPassword
-      if (result) {
+      let login = false
+      for (var item in this.users) {
+        if (this.loginForm === this.users[item].login && this.passwordForm === this.users[item].password) {
+          login = true
+        }
+      }
+      if (login) {
         this.show = false
         this.alert = false
       } else {
@@ -265,9 +347,15 @@ export default {
     Login () {
       this.show = true
     },
+    Add: function () {
+      alert(`Добавление пользователя c логином ${this.vLogin} произведено!`)
+      this.users[this.users.length] = {
+        login: this.vLogin,
+        password: this.vPassword
+      }
+    },
     Delete: function (key) {
-      debugger
-      alert(`Удаление пользователя c логином ${this.users[key].login} и паролем ${this.users[key].password} произведено!`)
+      alert(`Удаление пользователя c логином ${this.users[key].login} произведено!`)
       this.users.splice([key], 1)
     }
   }
