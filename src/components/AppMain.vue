@@ -51,8 +51,8 @@
         <v-toolbar-title>Приложение учета пользователей</v-toolbar-title>
         <v-spacer></v-spacer>
         <div class="hidden-sm-and-down">
+          <v-btn flat>{{fio}}</v-btn>
           <v-btn flat>{{loginForm}}</v-btn>
-          <v-btn flat>{{passwordForm}}</v-btn>
           <v-btn flat @click.native="Login()">Выход</v-btn>
         </div>
 
@@ -84,11 +84,43 @@
             :id="`view`"
           >
             <v-card flat>
-              <ul>
-                <li v-for="user in users" :key="user.login">
-                  {{user.login}} {{user.password}}
-                </li>
-              </ul>
+
+              <h3>Просмотр учетных записей</h3>
+              <div v-for="(user, key, index) in users" v-bind:key="index">
+                <v-layout row style="max-width: 50%; margin: auto;">
+
+                  <v-text-field
+                    label="Логин пользователя"
+                    v-model="user.login"
+                    outline
+                    :aria-readonly="users.login"
+                  ></v-text-field>
+
+                  <v-text-field
+                    label="Фамилия"
+                    v-model="user.vSecondName"
+                    :aria-readonly="users.vSecondName"
+                    outline
+                  ></v-text-field>
+
+                  <v-text-field
+                    label="Имя"
+                    v-model="user.vFirstName"
+                    :aria-readonly="users.vFirstName"
+                    outline
+                  ></v-text-field>
+
+                  <v-text-field
+                    label="Отчество"
+                    v-model="user.vPatronymic"
+                    :aria-readonly="users.vPatronymic"
+                    outline
+                  ></v-text-field>
+
+                </v-layout>
+
+              </div>
+
             </v-card>
           </v-tab-item>
 
@@ -291,10 +323,9 @@ export default {
   name: 'AppMain',
   data: function () {
     return {
-      adminLogin: 'xxx',
-      adminPassword: 'xxx',
       loginForm: null,
       passwordForm: null,
+      fio: null,
 
       vLogin: null,
       vPassword: null,
@@ -307,8 +338,8 @@ export default {
       vDate: null,
 
       users: [
-        {login: 'admin', password: 'admin'},
-        {login: 'user', password: 'user'}
+        { login: 'admin', password: 'admin', vSecondName: 'Петров', vFirstName: 'Петр', vPatronymic: 'Петрович' },
+        { login: 'user', password: 'user', vSecondName: 'Сидоров', vFirstName: 'Сидор', vPatronymic: 'Сидорович' }
       ],
 
       menu: false,
@@ -335,6 +366,8 @@ export default {
       for (var item in this.users) {
         if (this.loginForm === this.users[item].login && this.passwordForm === this.users[item].password) {
           login = true
+          localStorage.setItem('CurrentUser', `${this.loginForm} ${this.users[item].vSecondName} ${this.users[item].vFirstName} ${this.users[item].vPatronymic}`)
+          this.fio = `${this.users[item].vSecondName} ${this.users[item].vFirstName} ${this.users[item].vPatronymic}`
         }
       }
       if (login) {
@@ -351,7 +384,15 @@ export default {
       alert(`Добавление пользователя c логином ${this.vLogin} произведено!`)
       this.users[this.users.length] = {
         login: this.vLogin,
-        password: this.vPassword
+        password: this.vPassword,
+        vPassword: this.vPassword,
+        vSecondName: this.vSecondName,
+        vFirstName: this.vFirstName,
+        vPatronymic: this.vPatronymic,
+        vPosition: this.vPosition,
+        vSubdivision: this.vSubdivision,
+        vEmail: this.vEmail,
+        vDate: this.vDate
       }
     },
     Delete: function (key) {
